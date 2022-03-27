@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { MiddlewareConsumer, Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 
 import { TypeOrmModule } from '@nestjs/typeorm';
@@ -7,6 +7,7 @@ import * as Joi from 'joi'
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { MemesModule } from './memes/memes.module';
+import { AppLoggerMiddleware } from './middleware/logger';
 import { UsersModule } from './users/users.module';
 
 @Module({
@@ -31,4 +32,9 @@ import { UsersModule } from './users/users.module';
   controllers: [AppController],
   providers: [AppService],
 })
-export class AppModule {}
+export class AppModule {
+  configure(consumer: MiddlewareConsumer): void {
+    consumer.apply(AppLoggerMiddleware).forRoutes('*');
+  }
+
+}
